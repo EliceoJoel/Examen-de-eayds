@@ -34,7 +34,7 @@ class App extends Component {
       let total_entrada = 0, total_valido = 0
       let suma = 0
 
-      while(valor[i] !== -999 && total_entrada < 100){
+      while(valor[i] !== undefined && total_entrada < 100){
         total_entrada = total_entrada + 1;
         if( valor[i] >= minimo && valor[i] <= maximo){
           total_valido = total_valido + 1;
