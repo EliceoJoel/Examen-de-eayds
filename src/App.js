@@ -83,7 +83,6 @@ class App extends Component {
                     <div className="form-row">
                       <div className="form-group col-md-6">
                         <label htmlFor="titulo"><b>Minimo</b></label><br/>
-                        <label htmlFor="subtitulo">Intruduzca el numero MINIMO ingresado en valor</label>
                         <input 
                           type="number" 
                           id="minimo"
@@ -95,7 +94,6 @@ class App extends Component {
                       </div>
                       <div className="form-group col-md-6">
                         <label htmlFor="titulo"><b>Maximo</b></label><br/>
-                        <label htmlFor="subtitulo">Intruduzca el numero MAXIMO ingresado en valor</label>
                         <input 
                           type="number" 
                           id="maximo"
