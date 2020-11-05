@@ -19,12 +19,12 @@ function App(props) {
 
    const handleChange = (e) => {
       setDatos({...datos, [e.target.name]: e.target.value});
+      setErrors({...errors, errorValor:"", errorMaximo:"", errorMinimo: ""})
    }
 
    const calcular = (e) => {
       e.preventDefault();
       if (validado()){
-         console.log(datos)
          let valor = datos.valor.split(',').map(x=>+x);
          let minimo = parseInt(datos.minimo);
          let maximo = parseInt(datos.maximo);
@@ -56,13 +56,17 @@ function App(props) {
 
       let res = false
       let valor = datos.valor.split(',').map(x=>+x);
-console.log(valor)
+
       if(valor.length === 1 && valor[0] === 0){
-         setErrors({...errors,errorValor: "Campo vacio, intruduzca numeros"})
+         setErrors({...errors, errorValor: "Campo vacio, intruduzca numeros"})
       }else if(valor.length > 100 ){
-         setErrors({...errors,errorValor: "La cantidad de numeros no debe sobre pasar los 100"})
+         setErrors({...errors, errorValor: "La cantidad de numeros no debe sobre pasar los 100"})
       }else if(valor.length < 2){
-         setErrors({...errors,errorValor: "La cantidad minina de numeros es de almenos 2"})
+         setErrors({...errors, errorValor: "La cantidad minina de numeros es de almenos 2"})
+      }else if(datos.minimo === ''){
+         setErrors({...errors, errorMinimo: "Campo vacio, introduzca un numero"})
+      }else if(datos.maximo === ''){
+         setErrors({...errors, errorMaximo: "Campo vacio, introduzca un numero"})
       }else{
          res = true;
       }
@@ -104,6 +108,7 @@ console.log(valor)
                               name="minimo"
                               onChange={handleChange}
                               />
+                              <p className="text-danger" id="errorMinimo">{errors.errorMinimo}</p>
                           </div>
                           <div className="form-group col-md-6">
                             <label htmlFor="titulo"><b>Maximo</b></label><br/>
@@ -114,6 +119,7 @@ console.log(valor)
                               name="maximo"
                               onChange={handleChange}
                             />
+                            <p className="text-danger" id="errorMaximo">{errors.errorMaximo}</p>
                           </div>
                         </div>
                         <button type="submit" className="btn btn-success">CALCULAR</button>
