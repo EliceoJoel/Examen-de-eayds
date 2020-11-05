@@ -1,122 +1,136 @@
-import React, { Component } from 'react'
+import React, { useState } from 'react';
 
-class App extends Component {
-    constructor() {
-        super()
-        this.state = {
-           valor:"",
-           minimo:"",
-           maximo:"",
-           ArrayValores: [],
-           media: '',
-           total_entrada:'',
-           total_valido: ''
-        }
+function App(props) {
 
-        this.onChange = this.onChange.bind(this)
-        this.onSubmit = this.onSubmit.bind(this)
-    }
+   const [datos, setDatos] = useState({
+      valor: '',
+      minimo: '',
+      maximo: '',
+      media: '',
+      total_entrada: '',
+      total_valido: ''
+   });
 
-    //metodo de cambios
-    onChange(e) {
-        this.setState({ [e.target.name]: e.target.value })
-    }
+   const [errors, setErrors] = useState({
+      errorValor: '',
+      errorMaximo: '',
+      errorMinimo: ''
+   })
 
-    //metodo que calcula todo
-    onSubmit(e){
-      e.preventDefault()
-      //convercion de array de strings a array de numeros
-      let valor = this.state.valor.split(",").map(x=>+x);
-      let minimo = parseInt(this.state.minimo);
-      let maximo = parseInt(this.state.maximo);
-      let media;
-      let i = 0;
-      let total_entrada = 0, total_valido = 0
-      let suma = 0
+   const handleChange = (e) => {
+      setDatos({...datos, [e.target.name]: e.target.value});
+   }
 
-      while(valor[i] !== undefined && total_entrada < 100){
-        total_entrada = total_entrada + 1;
-        if( valor[i] >= minimo && valor[i] <= maximo){
-          total_valido = total_valido + 1;
-          suma = suma + valor[i];
-        }
-        i = i + 1;
+   const calcular = (e) => {
+      e.preventDefault();
+      if (validado()){
+         console.log(datos)
+         let valor = datos.valor.split(',').map(x=>+x);
+         let minimo = parseInt(datos.minimo);
+         let maximo = parseInt(datos.maximo);
+         let media;
+         let i = 0;
+         let total_entrada = 0;
+         let total_valido = 0;
+         let suma = 0;
+         
+         while(valor[i] !== undefined && total_entrada < 100){
+            total_entrada = total_entrada + 1;
+            if( valor[i] >= minimo && valor[i] <= maximo){
+              total_valido = total_valido + 1;
+              suma = suma + valor[i]; 
+            }
+            i = i + 1;
+         }
+         if(total_valido > 0){
+            media = suma / total_valido;
+         }else{
+            media = -999
+         }
+         setDatos({...datos, media, total_entrada, total_valido});
       }
-      if(total_valido > 0){
-        media = suma / total_valido;
+   }
+
+
+   const validado = () => {
+
+      let res = false
+      let valor = datos.valor.split(',').map(x=>+x);
+console.log(valor)
+      if(valor.length === 1 && valor[0] === 0){
+         setErrors({...errors,errorValor: "Campo vacio, intruduzca numeros"})
+      }else if(valor.length > 100 ){
+         setErrors({...errors,errorValor: "La cantidad de numeros no debe sobre pasar los 100"})
+      }else if(valor.length < 2){
+         setErrors({...errors,errorValor: "La cantidad minina de numeros es de almenos 2"})
       }else{
-        media = -999
+         res = true;
       }
 
-      this.setState({media: media});
-      this.setState({total_entrada: total_entrada});
-      this.setState({total_valido: total_valido});
+      if(res === false) {
+         setDatos({...datos, media:"", total_entrada:"", total_valido:""}) 
+      }
+      return res;
+   }
+   
 
-      console.log(media);
-      console.log(total_entrada);
-      console.log(total_valido);
-    }
-
-
-
-    render() {
-        return (
-          <div>
-            <div className="p-3 mb-2 bg-success text-white text-center h3">EXAMEN DE EVALUACION Y AUDITORIA DE SISTEMAS</div>
+   return (
+      <div>
+         <div className="p-3 mb-2 bg-success text-white text-center h3">EXAMEN DE EVALUACION Y AUDITORIA DE SISTEMAS</div>
             <div className="container mt-5">
-              <div className="row">
-                <div className="col">
-                  <form noValidate onSubmit={this.onSubmit}>
-                    <h4 className="text-center mb-4">Primer parcial</h4>
-                    <div className="form-group">
-                      <label htmlFor="titulo"><b>Valor</b></label><br/>
-                      <label htmlFor="subtitulo">Indroduzca numeros separados por una coma y SIN ESPACIOS. Ejemplo: 15.2,12,14,74,2.2. los espacios en blanco seran rellenados con ceros!</label>
-                      <input 
-                        type="text" 
-                        id="valor"
-                        className="form-control" 
-                        name="valor"
-                        value={this.state.valor}
-                        onChange={this.onChange}
-                        />
-                    </div>
-                    <div className="form-row">
-                      <div className="form-group col-md-6">
-                        <label htmlFor="titulo"><b>Minimo</b></label><br/>
-                        <input 
-                          type="number" 
-                          id="minimo"
-                          className="form-control" 
-                          name="minimo"
-                          value={this.state.minimo}
-                          onChange={this.onChange}
-                          />
-                      </div>
-                      <div className="form-group col-md-6">
-                        <label htmlFor="titulo"><b>Maximo</b></label><br/>
-                        <input 
-                          type="number" 
-                          id="maximo"
-                          className="form-control" 
-                          name="maximo"
-                          value={this.state.maximo}
-                          onChange={this.onChange}
-                        />
-                      </div>
-                    </div>
-                    <button type="submit" className="btn btn-success">CALCULAR</button>
-                  </form>
-                </div>
-              </div>
-              <div className="mt-5">
-                <p id='media'>{"Media = " + this.state.media}</p>
-                <p id='entrada'>{"Total entradas = " + this.state.total_entrada}</p>
-                <p id='valido'>{"Total valido = " + this.state.total_valido}</p>
-              </div>
-            </div>
-          </div>
-        )
-    }
+               <div className="row">
+                  <div className="col">
+                     <form noValidate onSubmit={calcular}>
+                        <h4 className="text-center mb-4">Primer parcial</h4>
+                        <div className="form-group">
+                           <label htmlFor="titulo"><b>Valor</b></label><br/>
+                           <label htmlFor="subtitulo">Indroduzca numeros separados por una coma y SIN ESPACIOS. Ejemplo: 15.2,12,14,74,2.2. los espacios en blanco seran rellenados con ceros!</label>
+                           <input 
+                             type="text" 
+                             id="valor"
+                             className="form-control" 
+                             name="valor"
+                             onChange={handleChange}
+                           />
+                           <p className="text-danger" id="errorValor">{errors.errorValor}</p>
+                        </div>
+                        <div className="form-row">
+                          <div className="form-group col-md-6">
+                            <label htmlFor="titulo"><b>Minimo</b></label><br/>
+                            <input 
+                              type="number" 
+                              id="minimo"
+                              className="form-control" 
+                              name="minimo"
+                              onChange={handleChange}
+                              />
+                          </div>
+                          <div className="form-group col-md-6">
+                            <label htmlFor="titulo"><b>Maximo</b></label><br/>
+                            <input 
+                              type="number" 
+                              id="maximo"
+                              className="form-control" 
+                              name="maximo"
+                              onChange={handleChange}
+                            />
+                          </div>
+                        </div>
+                        <button type="submit" className="btn btn-success">CALCULAR</button>
+                     </form>
+                  </div>
+               </div>
+               <div className="mt-5">
+                  <p><b>{"Media:"}</b></p>
+                  <p id='media'>{datos.media}</p>
+                  <p><b>{"Total entradas:"}</b></p>
+                  <p id='entradas'>{datos.total_entrada}</p>
+                  <p><b>{"Total valido:"}</b></p>
+                  <p id='valido'>{datos.total_valido}</p>
+               </div>
+         </div>
+      </div>
+   );
 }
 
-export default App
+export default App;
