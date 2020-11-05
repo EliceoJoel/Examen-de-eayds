@@ -34,7 +34,7 @@ function App(props) {
          let total_valido = 0;
          let suma = 0;
          
-         while(valor[i] !== undefined && total_entrada < 100){
+         while(valor[i] !== -999 && valor[i] !== undefined && total_entrada < 100 ){
             total_entrada = total_entrada + 1;
             if( valor[i] >= minimo && valor[i] <= maximo){
               total_valido = total_valido + 1;
@@ -56,9 +56,11 @@ function App(props) {
 
       let res = false
       let valor = datos.valor.split(',').map(x=>+x);
-
+      tiende_letras()
       if(valor.length === 1 && valor[0] === 0){
          setErrors({...errors, errorValor: "Campo vacio, intruduzca numeros"})
+      }else if(tiende_letras()){
+         setErrors({...errors, errorValor: "No se puede ingresar letras, solo numeros!"})
       }else if(valor.length > 100 ){
          setErrors({...errors, errorValor: "La cantidad de numeros no debe sobre pasar los 100"})
       }else if(valor.length < 2){
@@ -75,6 +77,24 @@ function App(props) {
          setDatos({...datos, media:"", total_entrada:"", total_valido:""}) 
       }
       return res;
+   }
+
+   const tiende_letras = () => {
+     let res = false
+      for (let i = 0; i < datos.valor.length; i++) {
+         let caracter = datos.valor.charAt(i);
+         if(esLetra(caracter)){
+            res = true
+            console.log("es letra")
+         }  
+      }
+      console.log(res);
+      return res;
+   }
+
+   const esLetra = (caracter) => {
+      let ascii = caracter.toUpperCase().charCodeAt(0);
+      return ascii > 64 && ascii < 91;
    }
    
 
